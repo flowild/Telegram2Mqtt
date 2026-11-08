@@ -1,0 +1,21 @@
+﻿[Unit]
+Description=Telegram2Mqtt configuration interface
+After=network.target
+
+[Service]
+Type=simple
+User=telegram2mqtt
+Group=telegram2mqtt
+WorkingDirectory=/opt/telegram2mqtt
+Environment=T2M_DATA=/var/lib/telegram2mqtt
+ExecStart=/usr/bin/python3 -m telegram2mqtt.web
+Restart=on-failure
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/telegram2mqtt
+
+[Install]
+WantedBy=multi-user.target

@@ -13,3 +13,5 @@ Lies zuerst die Projektanforderungen in [AGENTS.md](../../AGENTS.md) und prüfe 
 - Vermeide Konflikte mit einem bestehenden Telegram-Empfänger: Für Entwicklung einen separaten Bot nutzen und die Migration des bestehenden Bots gesondert planen. Ein Telegram-Bot kann nicht gleichzeitig Webhook und Polling für den Empfang nutzen.
 - Prüfe relevante Änderungen anhand beobachtbaren Verhaltens: erlaubte und abgelehnte Chats, Bot-Trennung, Sendeergebnisse, Wiederanlauf der Warteschlange und Fehlerfälle. Externe Dienste bei Tests kontrolliert ersetzen, sofern echte Integration nicht erforderlich ist.
 - Halte Projektanweisungen und den dokumentierten Vertrag bei funktionalen Änderungen synchron. Implementiere die spätere Home-Assistant-Integration oder direkte Gerätesteuerung nur, wenn sie gesondert beauftragt werden.
+
+Der bisherige SQLite-Kern in `telegram2mqtt/store.py` ist isoliert und noch nicht an Telegram oder MQTT angebunden. Er wird von der Konfigurationsoberfläche genutzt. Sein Schema und Vertrag sind vorläufig; vor einer Integration Transaktionsgrenzen, Mehrläufigkeit, Fehlerbehandlung und die vollständige Umsetzung der obigen Anforderungen prüfen.

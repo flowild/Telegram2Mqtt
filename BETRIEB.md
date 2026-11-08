@@ -1,0 +1,11 @@
+﻿# Installation und Betrieb
+
+Die Konfigurationsoberfläche 0.1.0 läuft im LXC als `telegram2mqtt.service` unter dem gleichnamigen Systembenutzer. Sie bietet eine Anmeldung sowie die lokale Verwaltung von Broker-Einstellungen, Bot-Tokens und Chat-Freigaben. Telegram- und MQTT-Netzwerkadapter fehlen: Die Oberfläche stellt keine Verbindung her und überträgt keine Nachrichten.
+
+Aufruf im lokalen Netz: `https://192.168.184.85:8443/` (DHCP-Adresse kann sich ändern). Das automatisch erzeugte Zertifikat ist selbstsigniert und wird vom Browser nicht als vertrauenswürdig eingestuft. Zertifikat über einen sicheren Kanal prüfen beziehungsweise später durch ein vertrauenswürdiges Zertifikat ersetzen. Die Oberfläche darf nicht ungeschützt ins Internet freigegeben werden.
+
+Das automatisch erzeugte erste Administrationspasswort liegt ausschließlich im Container in `/var/lib/telegram2mqtt/initial-admin-password`. Mit dem dokumentierten SSH-Schlüssel als root anmelden und diese Datei dort anzeigen; das Passwort nicht in Git, Tickets oder Chat kopieren. Nach der Anmeldung auf der Oberfläche ein eigenes Passwort mit mindestens zwölf Zeichen setzen. Dabei wird die Datei entfernt. Der Anmelde-Hash wird mit PBKDF2 gespeichert; Sitzungen sind nach Neustart ungültig und laufen nach einer Stunde ab.
+
+Die Datenbank `/var/lib/telegram2mqtt/state.db` enthält Broker-Passwort und Bot-Tokens im Klartext und ist durch den Dienstbenutzer und restriktive Dateirechte geschützt. Auch Backups enthalten Geheimnisse und müssen entsprechend geschützt werden. Die Weboberfläche gibt gespeicherte Zugangsdaten nicht erneut aus; leere MQTT-Zugangsfelder erhalten die vorhandenen Werte. TLS-Zertifikat und privater Schlüssel befinden sich ebenfalls im Datenverzeichnis.
+
+Für Installation oder Aktualisierung aus einem geprüften Checkout als root im Projektverzeichnis `sh deploy/install.sh` ausführen. Das Skript benötigt Python 3, OpenSSL und systemd, installiert die Programmdateien nach `/opt/telegram2mqtt`, erhält vorhandene Daten und Zertifikate und startet den Dienst neu. Status und Logs: `systemctl status telegram2mqtt` und `journalctl -u telegram2mqtt`. Bei einem Update vorab Datenverzeichnis geschützt sichern; eine Wiederherstellung wurde noch nicht erprobt. Ein vollständig getesteter Backup-Ablauf sowie Netzwerkadapter und produktive Betriebsfreigabe fehlen noch.
