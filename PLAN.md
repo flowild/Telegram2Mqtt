@@ -55,4 +55,4 @@ Vorgesehen sind QoS 1, eine dauerhafte MQTT-Sitzung und Last Will für Offline-S
 
 ## Aktueller Fortschritt
 
-Der SQLite-Kern und die HTTPS-Konfigurationsoberfläche sind vorhanden; letztere ist im LXC installiert. Broker-Zugangsdaten und Bot-Tokens können dort gespeichert werden. Telegram- und MQTT-Netzwerkadapter fehlen; der Entwurf oben ist weiterhin kein implementierter MQTT-Vertrag. Betrieb und Erstzugang stehen in BETRIEB.md.
+Der SQLite-Kern, die HTTPS-Konfigurationsoberfläche und die Bridge sind im LXC installiert. Der tatsächliche MQTT-Vertrag steht in MQTT.md und der Betrieb in BETRIEB.md. Ein ausgehender Test wurde bestätigt. Der eingehende Telegram-Empfang ist wegen eines Konflikts mit einem anderen Empfänger angehalten und noch nicht Ende zu Ende abgenommen. Die übrigen obigen Punkte bleiben Planung, soweit nicht anders dokumentiert.

@@ -1,4 +1,4 @@
-"""Local configuration UI; the bridge transports are not yet implemented."""
+"""Local configuration UI."""
 import base64
 import hashlib
 import hmac
@@ -91,13 +91,14 @@ class Handler(BaseHTTPRequestHandler):
         if not sid:
             return self.response(self.render('<section><h2>Anmelden</h2><form method="post" action="/login">' + field("password", "Passwort", "password") + '<button>Anmelden</button></form></section>'))
         store = Store(DATA / "state.db")
-        settings = dict(store.db.execute("SELECT key,value FROM settings WHERE key IN ('mqtt_host','mqtt_port')"))
+        settings = dict(store.db.execute("SELECT key,value FROM settings WHERE key IN ('mqtt_host','mqtt_port','mqtt_tls')"))
         bots = list(store.db.execute("SELECT id FROM bots ORDER BY id"))
         chats = list(store.db.execute("SELECT bot_id,chat_id,allowed,label FROM chats ORDER BY bot_id,chat_id"))
         store.close()
         esc = html.escape
-        content = '<p class="notice"><strong>Konfiguration verfügbar.</strong> Die Telegram- und MQTT-Verbindungen sind noch nicht implementiert; Nachrichten werden noch nicht übertragen.</p>'
-        content += '<section><h2>MQTT-Broker</h2><p>Das Passwort bleibt leer, wenn es unverändert bleiben soll.</p>' + self.form('mqtt', field('host','Server',value=settings.get('mqtt_host','')) + field('port','Port',value=settings.get('mqtt_port','1883')) + field('user','Benutzername (leer lassen zum Beibehalten)') + field('password','Passwort','password'),csrf) + '</section>'
+        content = '<p class="notice">Die Brücke läuft als separater Dienst. Verbindungszustand und Fehler stehen im Dienstprotokoll.</p>'
+        tls_options = '<label>MQTT-TLS<select name="tls"><option value="0"' + (' selected' if settings.get('mqtt_tls') != '1' else '') + '>Aus</option><option value="1"' + (' selected' if settings.get('mqtt_tls') == '1' else '') + '>An</option></select></label>'
+        content += '<section><h2>MQTT-Broker</h2><p>Das Passwort bleibt leer, wenn es unverändert bleiben soll.</p>' + self.form('mqtt', field('host','Server',value=settings.get('mqtt_host','')) + field('port','Port',value=settings.get('mqtt_port','1883')) + field('user','Benutzername (leer lassen zum Beibehalten)') + field('password','Passwort','password') + tls_options,csrf) + '</section>'
         content += '<section><h2>Telegram-Bots</h2><ul>' + ''.join('<li>' + esc(b[0]) + '</li>' for b in bots) + '</ul>' + self.form('bot', field('id','Bot-ID (Buchstaben, Zahlen, _ oder -)') + field('token','Bot-Token','password'),csrf,'Bot hinzufügen') + '</section>'
         content += '<section><h2>Chat-Freigaben</h2><ul>' + ''.join('<li>' + esc(b) + ' · ' + esc(c) + ' · ' + ('freigegeben' if a else 'nicht freigegeben') + ' · ' + esc(l) + '</li>' for b,c,a,l in chats) + '</ul>' + self.form('chat',field('bot','Bot-ID') + field('chat','Chat-ID') + '<label>Aktion<select name="allowed"><option value="1">Freigeben</option><option value="0">Sperren</option></select></label>',csrf) + '</section>'
         content += '<section><h2>Passwort ändern</h2>' + self.form('password',field('password','Neues Passwort (mindestens 12 Zeichen)','password'),csrf) + '</section>' + self.form('logout','',csrf,'Abmelden')
@@ -135,7 +136,7 @@ class Handler(BaseHTTPRequestHandler):
                     host, port = get("host").strip(), int(get("port"))
                     if not host or len(host) > 253 or not 1 <= port <= 65535:
                         raise ValueError()
-                    pairs = [("mqtt_host", host), ("mqtt_port", str(port))]
+                    pairs = [("mqtt_host", host), ("mqtt_port", str(port)), ("mqtt_tls", "1" if get("tls") == "1" else "0")]
                     if get("user"):
                         pairs.append(("mqtt_user", get("user")))
                     if get("password"):

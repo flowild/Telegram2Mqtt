@@ -135,6 +135,14 @@ class Store:
                 result["message_id"] = str(message_id)
             self._publish(bot_id, "event/result", result)
 
+    def fail(self, bot_id, request_id):
+        with self.db:
+            row = self.db.execute("SELECT state FROM jobs WHERE bot_id=? AND request_id=?", (bot_id, request_id)).fetchone()
+            if not row or row[0] != "sending":
+                raise ValueError("job is not sending")
+            self.db.execute("UPDATE jobs SET state='failed' WHERE bot_id=? AND request_id=?", (bot_id, request_id))
+            self._publish(bot_id, "event/result", {"request_id": request_id, "status": "failed", "error_code": "delivery_failed"})
+
     def recover(self):
         """A send interrupted by shutdown is ambiguous; retry can create duplicates."""
         with self.db:

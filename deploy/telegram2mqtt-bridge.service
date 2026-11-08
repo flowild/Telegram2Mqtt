@@ -1,0 +1,23 @@
+﻿[Unit]
+Description=Telegram2Mqtt bridge
+After=network-online.target telegram2mqtt.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=telegram2mqtt
+Group=telegram2mqtt
+WorkingDirectory=/opt/telegram2mqtt
+Environment=T2M_DATA=/var/lib/telegram2mqtt
+ExecStart=/usr/bin/python3 -m telegram2mqtt.bridge
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/telegram2mqtt
+
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,6 @@
 # Projektagent: Telegram2Mqtt
 
-Dieses Projekt entwickelt und betreibt eine lokale, mehrmandantenfähige Telegram–MQTT-Brücke. Lies vor Änderungen den tatsächlichen Projektstand; das Repository enthält einen Nachrichtenkern und eine installierte Konfigurationsoberfläche. Behaupte nicht, dass geplante Funktionen bereits implementiert oder bereitgestellt sind.
+Dieses Projekt entwickelt und betreibt eine lokale, mehrmandantenfähige Telegram–MQTT-Brücke. Lies vor Änderungen den tatsächlichen Projektstand; das Repository enthält einen Nachrichtenkern, eine installierte Konfigurationsoberfläche und die Bridge. Behaupte nicht, dass geplante Funktionen bereits implementiert oder bereitgestellt sind.
 
 ## Pflegepflicht
 
@@ -8,7 +8,7 @@ Halte diese Datei und die projektspezifischen Skills aktuell: Aktualisiere bei �
 
 ## Versionierung und Git
 
-- Kümmere dich um eine nachvollziehbare Projektversionierung. Verwende für die Anwendung semantische Versionen (`MAJOR.MINOR.PATCH`); Die maßgebliche Versionsquelle ist `telegram2mqtt/__init__.py` (`__version__`); aktuelle Version: `0.1.0`.
+- Kümmere dich um eine nachvollziehbare Projektversionierung. Verwende für die Anwendung semantische Versionen (`MAJOR.MINOR.PATCH`); Die maßgebliche Versionsquelle ist `telegram2mqtt/__init__.py` (`__version__`); aktuelle Version: `0.2.0`.
 - Passe bei jeder Änderung der Projektversion alle tatsächlich vorhandenen maßgeblichen Versionsangaben und diese Agentenanweisungen an; dokumentiere dabei die aktuelle Version und gegebenenfalls geänderte Abläufe. Halte außerdem betroffene projektspezifische Skills aktuell.
 - Führe bei jeder Änderung der Projektversion nach passenden Prüfungen automatisch einen Commit der zugehörigen Änderungen aus und pushe ihn auf den zugehörigen Remote-Branch. Prüfe vorher den Git-Status und nimm keine fremden oder geheimen Dateien unbeabsichtigt in den Commit auf. Schlägt ein Test, Commit oder Push fehl oder ist das Ziel unklar, melde den Zustand und die Ursache; erzwinge keinen Push und erfinde keinen erfolgreichen Abschluss.
 
@@ -23,7 +23,7 @@ Halte diese Datei und die projektspezifischen Skills aktuell: Aktualisiere bei �
 
 ## Vorgeschlagene Architektur – noch festzulegen
 
-- Pro Bot ein MQTT-Namensraum, etwa `telegram2mqtt/<bot-id>/event/message`, `command/send`, `event/result` und `status`. Dies sind Vorschläge, noch kein verbindlicher oder implementierter Vertrag. Vor Integration JSON-Schemas, Versionierung, Korrelation, Berechtigungen, QoS, Retain-Verhalten und Fehlerfälle festlegen und dokumentieren.
+- Der implementierte MQTT-5-Vertrag mit Topics, QoS, Retain-Verhalten und Fehlern steht in [MQTT.md](MQTT.md).
 - Ein systemd-Dienst im Debian-LXC startet derzeit die Oberfläche automatisch. Wiederverbindung und die vollständige persistente Warteschlangenverarbeitung müssen noch implementiert werden.
 - Für Telegram-Empfang zunächst einen separaten Test-Bot verwenden. Einen bestehenden, von Home Assistant genutzten Bot erst bei geplanter Migration übernehmen; Polling und Webhook sind nicht gleichzeitig nutzbar. Keine bestehende Integration unbeabsichtigt umstellen.
 - Telegram benötigt Internetzugang; Broker und Oberfläche sind lokal. Broker-Zugang, TLS, Oberfläche und Schutz gespeicherter Geheimnisse entsprechend der tatsächlichen Umgebung konfigurieren.
@@ -37,17 +37,17 @@ Diese Skills liegen bewusst im Repository und sind über diese Verweise nutzbar;
 
 ## Offene Informationen
 
-Auf Proxmox `192.168.184.2`, Node `pve`, wurde der unprivilegierte Debian-13-LXC `telegram2mqtt` (VM-ID 104) angelegt. Er nutzt `local-lvm`, `vmbr0`, DHCP und automatischen Start. Die per DHCP vergebene Adresse war bei Einrichtung `192.168.184.85` und kann sich ändern. SSH-Zugriff als `root` mit dem Schlüssel `.secret/telegram2mqtt-ssh-ed25519` und der Hostschlüsseldatei `.secret/ssh-known-hosts` wurde geprüft. Root-Passwortanmeldung über SSH ist deaktiviert. Das ursprünglich erzeugte Passwort in `.secret/telegram2mqtt-lxc-root-password.txt` wurde offengelegt und darf nicht mehr verwendet werden; ob es im Container ersetzt wurde, ist nicht bestätigt. `.secret` ist von Git ausgeschlossen. Die Konfigurationsoberfläche ist installiert; die Telegram- und MQTT-Anbindung fehlt.
+Auf Proxmox `192.168.184.2`, Node `pve`, wurde der unprivilegierte Debian-13-LXC `telegram2mqtt` (VM-ID 104) angelegt. Er nutzt `local-lvm`, `vmbr0`, DHCP und automatischen Start. Die per DHCP vergebene Adresse war bei Einrichtung `192.168.184.85` und kann sich ändern. SSH-Zugriff als `root` mit dem Schlüssel `.secret/telegram2mqtt-ssh-ed25519` und der Hostschlüsseldatei `.secret/ssh-known-hosts` wurde geprüft. Root-Passwortanmeldung über SSH ist deaktiviert. Das ursprünglich erzeugte Passwort in `.secret/telegram2mqtt-lxc-root-password.txt` wurde offengelegt und darf nicht mehr verwendet werden; ob es im Container ersetzt wurde, ist nicht bestätigt. `.secret` ist von Git ausgeschlossen. Oberfläche und Bridge sind installiert; der Telegram-Empfang meldete einen Konflikt mit einem anderen Empfänger und ist angehalten.
 
 Konkrete Broker-Einstellungen und Zugangsdaten für die spätere Anwendung sind noch nicht bekannt. Keine Tokens oder Passwörter ins Repository, in Logs oder in Beispiele mit echten Werten schreiben. Externe Infrastruktur nur im Rahmen der konkreten Beauftragung und verfügbaren Zugriffsrechte verändern.
 
 ## Umsetzungsplanung
 
-Der nicht implementierte Architektur- und Ablaufentwurf mit offenen Entscheidungen und Abnahmekriterien steht in [PLAN.md](PLAN.md). Er ist ein Vorschlag und begründet noch keinen verbindlichen MQTT-Vertrag oder eine bereitgestellte Anwendung.
+Der Architektur- und Ablaufentwurf mit offenen Punkten steht in [PLAN.md](PLAN.md); die tatsächlich implementierte Schnittstelle ist in [MQTT.md](MQTT.md) beschrieben.
 
 ## Implementierungsstand
 
-Der SQLite-Nachrichtenkern liegt in `telegram2mqtt/store.py`; die Konfigurationsoberfläche in `telegram2mqtt/web.py`. Die Oberfläche ist im LXC als systemd-Dienst installiert. Telegram- und MQTT-Adapter fehlen; der Nachrichtenvertrag und das Datenbankschema sind vorläufig. Betrieb und Erstzugang stehen in [BETRIEB.md](BETRIEB.md).
+Der SQLite-Nachrichtenkern liegt in `telegram2mqtt/store.py`, die Konfigurationsoberfläche in `telegram2mqtt/web.py` und die Bridge in `telegram2mqtt/bridge.py`. Beide Dienste sind im LXC installiert. Der implementierte Nachrichtenvertrag steht in [MQTT.md](MQTT.md), Betrieb und Erstzugang in [BETRIEB.md](BETRIEB.md). Ein MQTT-zu-Telegram-Test wurde bestätigt; der Telegram-Empfang ist wegen eines Empfängerkonflikts angehalten.
 
 ## Installation bei Änderungen
 
