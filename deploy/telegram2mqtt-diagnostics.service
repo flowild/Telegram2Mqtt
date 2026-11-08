@@ -1,0 +1,13 @@
+[Unit]
+Description=Export filtered Telegram2Mqtt bridge diagnostics
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/telegram2mqtt
+Environment=T2M_DATA=/var/lib/telegram2mqtt
+ExecStart=/usr/bin/python3 -m telegram2mqtt.web --collect-bridge-log
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/telegram2mqtt

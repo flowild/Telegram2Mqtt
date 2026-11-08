@@ -43,6 +43,22 @@ class Store:
         with self.db:
             self.db.execute("INSERT INTO bots(id, token) VALUES (?, ?)", (bot_id, token))
 
+    def remove_bot(self, bot_id):
+        """Remove a bot only when no delivery is pending or in progress."""
+        if not BOT_ID.fullmatch(bot_id):
+            raise ValueError("invalid bot")
+        try:
+            self.db.execute("BEGIN IMMEDIATE")
+            if self.db.execute("SELECT 1 FROM jobs WHERE bot_id=? AND state IN ('pending','sending')", (bot_id,)).fetchone():
+                raise ValueError("bot has unfinished jobs")
+            result = self.db.execute("DELETE FROM bots WHERE id=?", (bot_id,))
+            if result.rowcount != 1:
+                raise ValueError("unknown bot")
+            self.db.commit()
+        except Exception:
+            self.db.rollback()
+            raise
+
     def allow(self, bot_id, chat_id, allowed=True):
         if not CHAT_ID.fullmatch(chat_id):
             raise ValueError("invalid chat ID")

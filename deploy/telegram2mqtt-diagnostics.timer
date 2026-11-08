@@ -1,0 +1,9 @@
+[Unit]
+Description=Refresh Telegram2Mqtt bridge diagnostics
+
+[Timer]
+OnBootSec=15s
+OnUnitActiveSec=30s
+
+[Install]
+WantedBy=timers.target

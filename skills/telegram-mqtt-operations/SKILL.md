@@ -18,3 +18,9 @@ Für SSH den in AGENTS.md dokumentierten Schlüssel und die dort genannte Hostsc
 - Dokumentiere tatsächliche Installations-, Update-, Backup- und Wiederherstellungsschritte sowie relevante Änderungen an Einstellungen und Betrieb. Halte Projektanweisungen und diesen Skill aktuell.
 
 Installiere jede Projektänderung nach passenden Prüfungen gemäß AGENTS.md auf dem vorgesehenen LXC und prüfe den Dienst. Installation und Erstzugang sind in BETRIEB.md beschrieben. Der tatsächliche MQTT-Vertrag steht in MQTT.md; Telegram-Empfangskonflikte vor Neustart gezielt klären.
+
+Die Webdiagnose zeigt Dienstzustand, Warteschlangenzahlen, Topics und gefilterte Journalmeldungen aus einem zeitgesteuerten Export. Der Dienstzustand ist kein Nachweis einer Telegram- oder MQTT-Verbindung; für vollständige Fehlerdiagnose das Bridge-Journal verwenden.
+
+Die Oberfläche bietet Nachrichtentests für freigegebene Chats: MQTT-Auftrag mit Ergebnisbeobachtung und Telegram-Empfang durch Senden eines angezeigten Testtexts. Ablauf und Grenzen stehen in BETRIEB.md.
+
+Das Administrationspasswort der Oberfläche hat eine Mindestlänge von sechs Zeichen.

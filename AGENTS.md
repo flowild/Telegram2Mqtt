@@ -49,6 +49,12 @@ Der Architektur- und Ablaufentwurf mit offenen Punkten steht in [PLAN.md](PLAN.m
 
 Der SQLite-Nachrichtenkern liegt in `telegram2mqtt/store.py`, die Konfigurationsoberfläche in `telegram2mqtt/web.py` und die Bridge in `telegram2mqtt/bridge.py`. Beide Dienste sind im LXC installiert. Der implementierte Nachrichtenvertrag steht in [MQTT.md](MQTT.md), Betrieb und Erstzugang in [BETRIEB.md](BETRIEB.md). Ein MQTT-zu-Telegram-Test wurde bestätigt; der Telegram-Empfang ist wegen eines Empfängerkonflikts angehalten.
 
+Die Oberfläche kann Dienstzustand, Warteschlangenzahlen, MQTT-Topics und einen gefilterten, zeitgesteuerten Bridge-Journalexport anzeigen. Der Systemdienstzustand belegt keinen Verbindungszustand von Telegram oder MQTT.
+
+Die Oberfläche bietet Tests für MQTT-zu-Telegram und Telegram-zu-MQTT für freigegebene Chats. Der Empfangstest erfordert eine vom Nutzer in Telegram gesendete Nachricht; Details und Grenzen stehen in BETRIEB.md.
+
+Das Passwort der Weboberfläche muss mindestens sechs Zeichen lang sein.
+
 ## Installation bei Änderungen
 
 Installiere ab sofort jede Projektänderung nach passenden Prüfungen auch auf dem vorgesehenen LXC und prüfe den Dienstzustand und die betroffene Funktion. Bewahre vorhandene Daten und Geheimnisse; dokumentiere die tatsächlich ausgeführte Installation. Wenn Tests fehlschlagen, Zugang fehlt oder die Installation nicht sicher möglich ist, installiere nicht blind und melde den konkreten Blocker. Der gewünschte automatische Commit und Push bei Versionsänderungen bleibt zusätzlich bestehen.

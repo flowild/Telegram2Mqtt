@@ -9,7 +9,7 @@ if ! id telegram2mqtt >/dev/null 2>&1; then
 fi
 install -d -m 0755 /opt/telegram2mqtt /opt/telegram2mqtt/telegram2mqtt
 install -d -o telegram2mqtt -g telegram2mqtt -m 0700 /var/lib/telegram2mqtt
-install -m 0644 telegram2mqtt/__init__.py telegram2mqtt/store.py telegram2mqtt/web.py telegram2mqtt/bridge.py /opt/telegram2mqtt/telegram2mqtt/
+install -m 0644 telegram2mqtt/__init__.py telegram2mqtt/store.py telegram2mqtt/web.py telegram2mqtt/bridge.py telegram2mqtt/test_messaging.py /opt/telegram2mqtt/telegram2mqtt/
 if [ ! -f /var/lib/telegram2mqtt/server.key ] && [ ! -f /var/lib/telegram2mqtt/server.crt ]; then
   umask 077
   openssl req -x509 -newkey rsa:3072 -nodes -keyout /var/lib/telegram2mqtt/server.key -out /var/lib/telegram2mqtt/server.crt -days 825 -subj '/CN=telegram2mqtt' >/dev/null 2>&1
@@ -17,8 +17,11 @@ if [ ! -f /var/lib/telegram2mqtt/server.key ] && [ ! -f /var/lib/telegram2mqtt/s
 fi
 install -m 0644 deploy/telegram2mqtt.service /etc/systemd/system/telegram2mqtt.service
 install -m 0644 deploy/telegram2mqtt-bridge.service /etc/systemd/system/telegram2mqtt-bridge.service
+install -m 0644 deploy/telegram2mqtt-diagnostics.service deploy/telegram2mqtt-diagnostics.timer /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable telegram2mqtt.service telegram2mqtt-bridge.service >/dev/null
+systemctl enable telegram2mqtt.service telegram2mqtt-bridge.service telegram2mqtt-diagnostics.timer >/dev/null
+systemctl start telegram2mqtt-diagnostics.timer
+systemctl start telegram2mqtt-diagnostics.service
 systemctl restart telegram2mqtt.service
 systemctl restart telegram2mqtt-bridge.service
 systemctl is-active --quiet telegram2mqtt.service
