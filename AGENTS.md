@@ -6,6 +6,12 @@ Dieses Projekt entwickelt und betreibt eine lokale, mehrmandantenfähige Telegra
 
 Halte diese Datei und die projektspezifischen Skills aktuell: Aktualisiere bei Änderungen an Anforderungen, Architektur, MQTT-Vertrag, Sicherheitsmodell, Installation oder Betrieb die betroffenen Anweisungen im selben Arbeitsschritt. Entferne überholte Aussagen und kennzeichne offene Entscheidungen und noch nicht implementierte Funktionen. Dokumentiere tatsächliche Schnittstellen und Abläufe anhand des Codes, statt unbelegte Annahmen als Fakten einzutragen. Prüfe vor der Arbeit, ob Dokumentation und Implementierung übereinstimmen.
 
+## Versionierung und Git
+
+- Kümmere dich um eine nachvollziehbare Projektversionierung. Verwende für die Anwendung semantische Versionen (`MAJOR.MINOR.PATCH`); solange noch keine Anwendung und keine maßgebliche Versionsdatei existieren, ist keine Projektversion festgelegt. Lege die maßgebliche Versionsquelle bei ihrer Einführung fest und dokumentiere sie hier.
+- Passe bei jeder Änderung der Projektversion alle tatsächlich vorhandenen maßgeblichen Versionsangaben und diese Agentenanweisungen an; dokumentiere dabei die aktuelle Version und gegebenenfalls geänderte Abläufe. Halte außerdem betroffene projektspezifische Skills aktuell.
+- Führe bei jeder Änderung der Projektversion nach passenden Prüfungen automatisch einen Commit der zugehörigen Änderungen aus und pushe ihn auf den zugehörigen Remote-Branch. Prüfe vorher den Git-Status und nimm keine fremden oder geheimen Dateien unbeabsichtigt in den Commit auf. Schlägt ein Test, Commit oder Push fehl oder ist das Ziel unklar, melde den Zustand und die Ursache; erzwinge keinen Push und erfinde keinen erfolgreichen Abschluss.
+
 ## Vereinbarter Umfang
 
 - Eine eigenständige App läuft in einem Proxmox-LXC, verbindet mehrere separat verwaltete Telegram-Bots mit einem lokalen MQTT-Broker und dient Anwendungen als Kommunikations-Backend.
@@ -31,4 +37,6 @@ Diese Skills liegen bewusst im Repository und sind über diese Verweise nutzbar;
 
 ## Offene Informationen
 
-Proxmox-Adresse, Ziel-Node, Storage, Netzwerk, konkrete Broker-Einstellungen und Bereitstellung von Zugangsdaten sind noch nicht bekannt. Keine Tokens oder Passwörter ins Repository, in Logs oder in Beispiele mit echten Werten schreiben. Externe Infrastruktur nur im Rahmen der konkreten Beauftragung und verfügbaren Zugriffsrechte verändern.
+Auf Proxmox `192.168.184.2`, Node `pve`, wurde der unprivilegierte Debian-13-LXC `telegram2mqtt` (VM-ID 104) angelegt. Er nutzt `local-lvm`, `vmbr0`, DHCP und automatischen Start. Die per DHCP vergebene Adresse war bei Einrichtung `192.168.184.85` und kann sich ändern. SSH-Zugriff als `root` mit dem Schlüssel `.secret/telegram2mqtt-ssh-ed25519` und der Hostschlüsseldatei `.secret/ssh-known-hosts` wurde geprüft. Root-Passwortanmeldung über SSH ist deaktiviert. Das ursprünglich erzeugte Passwort in `.secret/telegram2mqtt-lxc-root-password.txt` wurde offengelegt und darf nicht mehr verwendet werden; ob es im Container ersetzt wurde, ist nicht bestätigt. `.secret` ist von Git ausgeschlossen. Die Anwendung ist noch nicht installiert oder implementiert.
+
+Konkrete Broker-Einstellungen und Zugangsdaten für die spätere Anwendung sind noch nicht bekannt. Keine Tokens oder Passwörter ins Repository, in Logs oder in Beispiele mit echten Werten schreiben. Externe Infrastruktur nur im Rahmen der konkreten Beauftragung und verfügbaren Zugriffsrechte verändern.
